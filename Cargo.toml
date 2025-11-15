@@ -1,0 +1,47 @@
+[package]
+name = "webbit"
+version = "0.1.0"
+edition = "2021"
+
+[dependencies]
+# code quality
+result_or_err = { git = "https://github.com/nykkl/result_or_err.git", tag = "0.1.0" }
+anyhow = "1.0"
+# collision detection
+ncollide2d = "0.33"
+# web
+wasm-bindgen = "0.2.45"
+js-sys = "0.3.22"
+[dependencies.web-sys]
+version = "0.3.69"
+features = [
+	'Window',
+	'Document',
+	'DocumentFragment',
+	'console',
+
+	'ResizeObserver',
+
+	'Node',
+	'Element',
+	'HtmlElement',
+	'HtmlTemplateElement',
+	'HtmlDivElement',
+	'HtmlHrElement',
+	'HtmlCanvasElement',
+	'CanvasRenderingContext2d',
+	'OffscreenCanvasRenderingContext2d',
+	'HtmlButtonElement',
+	'HtmlInputElement',
+	'HtmlLabelElement',
+
+	'PointerEvent',
+	'WheelEvent',
+	'InputEvent',
+
+	'CssStyleDeclaration',
+	'DomRect',
+
+	'ImageData',
+	'OffscreenCanvas',
+]
