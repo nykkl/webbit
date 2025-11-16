@@ -2,10 +2,9 @@ use wasm_bindgen::{prelude::Closure, JsCast};
 use web_sys::{Event, EventTarget};
 
 /// Stops the specified event from bubbling up.
-/// By default it will also prvent the default action.
 /// By default this does not expire. That means you can drop it and it will keep working.
 ///
-/// These defaults can be changed by configuring the object with [BubbleStopper::configure].
+/// The defaults can be changed by configuring the object with [BubbleStopper::configure].
 pub struct BubbleStopper {
 	closure: Option<Closure<dyn FnMut(Event)>>,
 	expires: bool,
@@ -71,13 +70,17 @@ pub struct BubbleStopperConfig {
 }
 impl Default for BubbleStopperConfig {
 	fn default() -> Self {
-		Self { prevent_default: true, expires: false }
+		Self { prevent_default: false, expires: false }
 	}
 }
 impl BubbleStopperConfig {
-	/// Don't prevent default action.
-	pub fn permit_default(mut self) -> Self {
-		self.prevent_default = false;
+	/// Prevent default action.
+	///
+	/// This might be more powerful than you expect.
+	/// e.g. if you use this on a text inputs click event, you won't be able to focus and thus type on it anymore.
+	/// Use with care.
+	pub fn prevent_default(mut self) -> Self {
+		self.prevent_default = true;
 		self
 	}
 	/// Resume event bubbling when [BubbleStopper] is dropped.
