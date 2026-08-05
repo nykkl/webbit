@@ -4,7 +4,7 @@ use web_sys::Element;
 use super::{Component, ComponentContent};
 
 /// Trait for using a Component as a trait object.
-pub trait DynamicComponent {
+pub trait DynamicComponent { // TODO: maybe rename to AnyComponent (otherwise we always have dyn DynamicComponent)
 	fn mount_in(&self, element: &Element) -> Result<()>;
 	fn update(&self) -> Result<()>;
 	fn unmount(&self) -> Result<()>;
