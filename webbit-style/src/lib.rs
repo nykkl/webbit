@@ -6,8 +6,12 @@ pub use crate::builder::StylesheetBuilder;
 #[cfg(test)]
 mod tests;
 
-fn style_src() -> PathBuf {
-	Path::new(env!("CARGO_MANIFEST_DIR")).join("style")
+/// Webbit's base stylesheet, without any user additions.
+///
+/// # Returns
+/// The compiled css.
+pub fn default_stylesheet() -> Result<String, Box<grass::Error>> {
+	StylesheetBuilder::default().build(style_src().join("webbit").join("styles.sass"))
 }
 
 impl Default for StylesheetBuilder {
@@ -16,10 +20,6 @@ impl Default for StylesheetBuilder {
 	}
 }
 
-/// Webbit's base stylesheet, without any user additions.
-///
-/// # Returns
-/// The compiled css.
-pub fn default_stylesheet() -> Result<String, Box<grass::Error>> {
-	StylesheetBuilder::default().build(style_src().join("webbit").join("styles.sass"))
+fn style_src() -> PathBuf {
+	Path::new(env!("CARGO_MANIFEST_DIR")).join("style")
 }
