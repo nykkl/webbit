@@ -11,7 +11,7 @@ mod tests;
 /// # Returns
 /// The compiled css.
 pub fn default_stylesheet() -> Result<String, Box<grass::Error>> {
-	StylesheetBuilder::default().build(style_src().join("webbit").join("styles.sass"))
+	StylesheetBuilder::default().build(default_style())
 }
 
 impl Default for StylesheetBuilder {
@@ -20,6 +20,13 @@ impl Default for StylesheetBuilder {
 	}
 }
 
+// style source file paths:
+fn root() -> PathBuf {
+	Path::new(env!("CARGO_MANIFEST_DIR")).into()
+}
 fn style_src() -> PathBuf {
-	Path::new(env!("CARGO_MANIFEST_DIR")).join("style")
+	root().join("style")
+}
+fn default_style() -> PathBuf {
+	style_src().join("webbit").join("styles.sass")
 }
