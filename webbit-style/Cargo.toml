@@ -1,0 +1,7 @@
+[package]
+name = "webbit-style"
+version = "0.1.0"
+edition = "2021"
+
+[dependencies]
+grass = "0.13"

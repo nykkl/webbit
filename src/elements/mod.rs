@@ -4,7 +4,7 @@ use result_or_err::ResultOrErr;
 use wasm_bindgen::JsCast;
 use web_sys::{
 	window, Element, HtmlCanvasElement, HtmlDivElement, HtmlElement, HtmlHrElement, HtmlInputElement,
-	HtmlLabelElement, HtmlTemplateElement, Node,
+	HtmlLabelElement, HtmlStyleElement, HtmlTemplateElement, Node,
 };
 
 pub fn document() -> web_sys::Document {
@@ -113,6 +113,21 @@ pub fn canvas() -> HtmlCanvasElement {
 
 pub fn hr() -> HtmlHrElement {
 	document().create_element("hr").unwrap().dyn_into::<HtmlHrElement>().unwrap()
+}
+
+/// Creates a new style element containing the given css (that is not mounted anywhere).
+///
+/// (Use [on()] to mount.)
+///
+/// Css applies to the whole document no matter where the element is mounted;
+/// mount it in a shadow root to actually scope it.
+///
+/// # Returns
+/// A new, unmounted, style element.
+pub fn style(css: &str) -> HtmlStyleElement {
+	let style = document().create_element("style").unwrap().dyn_into::<HtmlStyleElement>().unwrap();
+	style.set_text_content(Some(css));
+	style
 }
 
 /// Returns a new node created from the template specified by [id].

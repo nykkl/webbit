@@ -22,6 +22,29 @@ pub use component_content::*;
 mod context;
 pub use context::*;
 
+/// A style element holding the css that the calling crate's build script wrote to `OUT_DIR`
+/// as [name].
+///
+/// (Use [on()](crate::elements::on) to mount.)
+///
+/// You can use `webbit-style` as a build dependency to build a stylesheet using sass and
+/// webbit's predefined mixins, components, etc.
+/// Have a look at `webbit_style::StylesheetBuilder`.
+///
+/// # Example
+/// ```rust,ignore
+/// on(&root, stylesheet!("app.css"));
+/// ```
+///
+/// # Returns
+/// A new, unmounted, style element.
+#[macro_export]
+macro_rules! stylesheet {
+	($name:literal) => {
+		$crate::elements::style(include_str!(concat!(env!("OUT_DIR"), "/", $name)))
+	};
+}
+
 #[cfg(test)]
 mod tests {
 	use super::*;
