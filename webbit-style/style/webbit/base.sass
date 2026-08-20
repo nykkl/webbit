@@ -5,14 +5,15 @@
 // -------------------------------------------------
 
 // these elements should fill their parent by default
-html, body, div, canvas
-	width: 100%
-	height: 100%
-	overflow: hidden
-// these are horrible defaults => replacing them for common elements (most importantly div!)
-html, body, div, canvas
-	touch-action: none
-	box-sizing: border-box
+.webbit-root
+	:where(div, canvas)
+		width: 100%
+		height: 100%
+		overflow: hidden
+	// these are horrible defaults => replacing them for common elements (most importantly div!)
+	:where(div, canvas)
+		touch-action: none
+		box-sizing: border-box
 
 
 // some generally useful stuff:
@@ -30,6 +31,8 @@ html, body, div, canvas
 	position: absolute
 	@include fill
 	touch-action: none
+	aspect-ratio: auto
+	transform-origin: 0 0
 
 
 // ----
