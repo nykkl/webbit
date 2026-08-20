@@ -1,7 +1,7 @@
 use super::*;
 
 fn compile_str(sass: &str) -> String {
-	grass::from_string(sass, &grass::Options::default().load_path(style_src())).unwrap()
+	grass::from_string(sass, &grass::Options::default().load_path(root_dir().join("style"))).unwrap()
 }
 
 #[test]
