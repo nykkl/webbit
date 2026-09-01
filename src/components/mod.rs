@@ -25,5 +25,8 @@ pub use side_bar::*;
 mod group_container;
 pub use group_container::*;
 
+mod mutable_group_container;
+pub use mutable_group_container::*;
+
 mod selection_frame;
 pub use selection_frame::*;
