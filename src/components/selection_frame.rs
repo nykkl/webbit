@@ -56,14 +56,14 @@ impl SelectionFrame {
 		compute_bonds: impl Fn() -> Option<Bounds> + 'static,
 		integrate_transformation: impl Fn(Affine2<Number>, &Self) -> Result<(), ()> + 'static,
 	) -> Rc<Self> {
-		let element = styled(div(), "selection-frame");
+		let element = styled(div(), "webbit-selection-frame");
 
-		let canvas = on(&element, styled(canvas(), "selection-canvas"));
-		let outline = on(&element, styled(div(), "selection-outline"));
+		let canvas = on(&element, styled(canvas(), "webbit-selection-canvas"));
+		let outline = on(&element, styled(div(), "webbit-selection-outline"));
 
-		let border = on(&outline, styled(div(), "selection-border"));
+		let border = on(&outline, styled(div(), "webbit-selection-border"));
 
-		let resize_button = on(&outline, styled(div(), "resize-button"));
+		let resize_button = on(&outline, styled(div(), "webbit-selection-resize-button"));
 		let resize_down_listener =
 			SharedEventListener::<PointerEvent>::new(resize_button.clone().into(), "pointerdown");
 		let resize_move_listener =
@@ -71,8 +71,8 @@ impl SelectionFrame {
 		let resize_up_listener =
 			SharedEventListener::<PointerEvent>::new(resize_button.clone().into(), "pointerup");
 
-		let control_knob = on(&outline, styled(div(), "control-knob"));
-		let move_button = on(&control_knob, styled(div(), "move-button"));
+		let control_knob = on(&outline, styled(div(), "webbit-selection-knob"));
+		let move_button = on(&control_knob, styled(div(), "webbit-selection-move-button"));
 		let move_down_listener =
 			SharedEventListener::<PointerEvent>::new(move_button.clone().into(), "pointerdown");
 		let move_move_listener =

@@ -13,7 +13,7 @@ use crate::{
 
 use super::Button;
 
-pub struct SideBar {
+pub struct Sidebar {
 	parent: RefCell<Element>,
 	element: HtmlDivElement,
 	content_holder: HtmlDivElement,
@@ -27,7 +27,7 @@ pub struct SideBar {
 	resize_up_listener: SharedEventListener<PointerEvent>,
 }
 
-impl SideBar {
+impl Sidebar {
 	pub fn new(
 		parent: Element,
 		sidebar_css: &str,
@@ -144,7 +144,7 @@ impl SideBar {
 	}
 }
 
-impl ComponentContent for SideBar {
+impl ComponentContent for Sidebar {
 	fn element(&self) -> &web_sys::Element {
 		&self.element
 	}

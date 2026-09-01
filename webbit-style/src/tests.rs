@@ -7,9 +7,9 @@ fn compile_str(sass: &str) -> String {
 #[test]
 fn default_stylesheet_compiles() {
 	let css = default_stylesheet().unwrap();
-	assert!(css.contains(".bar-button"));
-	assert!(css.contains(".selection-frame"));
-	assert!(css.contains(".context-menu"));
+	assert!(css.contains(".webbit-bar-button"));
+	assert!(css.contains(".webbit-selection-frame"));
+	assert!(css.contains(".webbit-context-menu"));
 }
 
 #[test]
@@ -20,7 +20,7 @@ fn variables_are_configurable() {
 
 #[test]
 fn mixins_are_usable_downstream() {
-	let css = compile_str("@use 'webbit/base'; .my-panel { @include base.flexFill; }");
+	let css = compile_str("@use 'webbit/base'; .my-panel { @include base.flex-fill; }");
 	assert!(css.contains(".my-panel"));
 	assert!(css.contains("flex: 1 1 100%"));
 }

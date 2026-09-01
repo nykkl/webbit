@@ -19,10 +19,10 @@ use std::path::Path;
 /// #### app/style/app.sass
 /// ```sass
 /// @use 'webbit/base'
-/// @use 'webbit/styles'
+/// @use 'webbit/components'
 ///
 /// .app
-/// 	@include base.flexContainer
+/// 	@include base.flex-container
 /// 	@include base.fill
 /// ```
 pub struct StylesheetBuilder {

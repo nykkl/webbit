@@ -16,21 +16,21 @@ pub type MenuAction = (&'static str, Box<dyn FnMut(PointerEvent)>);
 
 impl ContextMenu {
 	pub fn new(quick_actions: Vec<MenuAction>, actions: Vec<MenuAction>, css: &'static str) -> Self {
-		let element = styled(div(), ["context-menu", css].join(" ").as_str());
+		let element = styled(div(), ["webbit-context-menu", css].join(" ").as_str());
 		BubbleStopper::new(element.clone().into(), "click");
 		BubbleStopper::new(element.clone().into(), "pointerdown");
 		BubbleStopper::new(element.clone().into(), "pointermove");
 		BubbleStopper::new(element.clone().into(), "pointerup");
 		BubbleStopper::new(element.clone().into(), "contextmenu");
 
-		let quick_action_div = on(&element, styled(div(), "context-menu-quick-section"));
-		let action_div = on(&element, styled(div(), "context-menu-section"));
+		let quick_action_div = on(&element, styled(div(), "webbit-context-menu-quick-section"));
+		let action_div = on(&element, styled(div(), "webbit-context-menu-section"));
 
 		let quick_actions = quick_actions
 			.into_iter()
 			.map(|(name, action)| {
 				let component =
-					Component::make(Button::new_with_handler(Some(name), "context-menu-quick-button", action));
+					Component::make(Button::new_with_handler(Some(name), "webbit-context-menu-quick-button", action));
 				component.mount_in(&quick_action_div);
 				component
 			})
@@ -38,7 +38,8 @@ impl ContextMenu {
 		let actions = actions
 			.into_iter()
 			.map(|(name, action)| {
-				let component = Component::make(Button::new_with_handler(Some(name), "context-menu-button", action));
+				let component =
+					Component::make(Button::new_with_handler(Some(name), "webbit-context-menu-button", action));
 				component.mount_in(&action_div);
 				component
 			})

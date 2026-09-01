@@ -24,7 +24,7 @@
 	overflow: hidden
 // we usually want to be able to move canvases around => absolute positioning relative to a positioned ancestor
 // also we want to do stuff like zoom and pan ourselves => absolutely no touch actions
-@mixin canvasContainer
+@mixin canvas-container
 	@include container
 	position: relative
 @mixin canvas
@@ -40,7 +40,7 @@
 // ----
 
 // default flex-container behavior
-@mixin flexContainer
+@mixin flex-container
 	@include container
 
 	display: flex
@@ -59,27 +59,27 @@
 	column-gap: 0
 
 // supplemental flex-container behaviors
-@mixin flexCenterContent
+@mixin flex-center-content
 	justify-content: center
 	align-items: center
-@mixin flexWrap
+@mixin flex-wrap
 	flex-wrap: wrap
 
 // default flex-item behavior
-@mixin flexItem
+@mixin flex-item
 	flex: 0 0 auto
 	align-self: auto
 
 // supplemental flex-item behaviors
-@mixin flexFill
+@mixin flex-fill
 	@include fill
 	flex: 1 1 100%
-@mixin flexSized
+@mixin flex-sized
 	flex-basis: auto
-@mixin flexFitContent
+@mixin flex-fit-content
 	flex-basis: content
 
 // often we want a flex container that is also a flex item in the parent container
-@mixin flexElement
-	@include flexContainer
-	@include flexItem
+@mixin flex-element
+	@include flex-container
+	@include flex-item

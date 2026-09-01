@@ -5,19 +5,19 @@
 
 @use 'base'
 
-.sidebar
-	@include base.flexElement
+.webbit-sidebar
+	@include base.flex-element
 	flex-direction: row
 	align-items: flex-start
-	@include base.flexSized
+	@include base.flex-sized
 	width: 25%
 	min-width: 80px
 	max-width: 100%
 	height: 100%
 	background-color: #111111
-.sidebar-resize-handle
-	@include base.flexItem
-	@include base.flexSized
+.webbit-sidebar-resize-handle
+	@include base.flex-item
+	@include base.flex-sized
 	touch-action: none
 	width: 8px
 	height: 10%
@@ -27,60 +27,60 @@
 	cursor: col-resize
 	&:hover
 		filter: brightness(1.5)
-.sidebar-internal
-	@include base.flexElement
-	@include base.flexFill
+.webbit-sidebar-internal
+	@include base.flex-element
+	@include base.flex-fill
 	flex-grow: 1
-.sidebar-controls
-	@include base.flexElement
+.webbit-sidebar-controls
+	@include base.flex-element
 	flex-direction: row
 	@include base.fill
-	@include base.flexFitContent
+	@include base.flex-fit-content
 	align-items: start
 	gap: 5px
-.sidebar-control-button
-	@include base.flexItem
-	@include base.flexSized
+.webbit-sidebar-control-button
+	@include base.flex-item
+	@include base.flex-sized
 	width: 35px
 	height: 35px
 	border-radius: 15%
 	margin: 10px
 	background-color: red
-.sidebar-control-title
+.webbit-sidebar-control-title
 	font-size: 45px
 	padding: 28px 40px
 	color: grey
-.sidebar-content
-	@include base.flexElement
-	@include base.flexFill
+.webbit-sidebar-content
+	@include base.flex-element
+	@include base.flex-fill
 	flex-grow: 1
 
 @mixin sidebar-view
-	@include base.flexElement
-	@include base.flexFill
+	@include base.flex-element
+	@include base.flex-fill
 	flex-direction: column
 	align-items: flex-start
 	overflow-y: scroll
 	scrollbar-color: #252525 #111111
 
 $bar-gaps: 7px !default
-.bar
-	@include base.flexElement
+.webbit-bar
+	@include base.flex-element
 	flex-direction: row
-	@include base.flexWrap
+	@include base.flex-wrap
 	width: 100%
 	padding: $bar-gaps
 	gap: 10px 25px
 	background: #111111
-.bar-group
-	@include base.flexElement
+.webbit-bar-group
+	@include base.flex-element
 	flex-direction: row
-	@include base.flexWrap
+	@include base.flex-wrap
 	gap: $bar-gaps
-.bar-button
-	@include base.flexElement
+.webbit-bar-button
+	@include base.flex-element
 	// display: inline-flex
-	@include base.flexCenterContent
+	@include base.flex-center-content
 	padding: 6px 15px
 	border-radius: 10px
 	border: solid #444444 4px
@@ -91,12 +91,12 @@ $bar-gaps: 7px !default
 		filter: brightness(1.5)
 	background: #444444
 	color: #e1e1d9
-.bar-accent-button
-	@extend .bar-button
+.webbit-bar-accent-button
+	@extend .webbit-bar-button
 	background: #222222
 	border-color: #222222
-.bar-text
-	@include base.flexElement
+.webbit-bar-text
+	@include base.flex-element
 	font: 26px Arial, sans-serif
 	padding: 6px 12px
 	width: 270px
@@ -113,21 +113,21 @@ $selection-z-index: 20 !default
 	position: absolute
 	overflow: visible
 	touch-action: none
-.selection-frame
+.webbit-selection-frame
 	@include selection-container
 	z-index: $selection-z-index + 0
-.selection-canvas
+.webbit-selection-canvas
 	@include base.canvas
 	z-index: $selection-z-index + 1
 	background-color: transparent
-.selection-outline
+.webbit-selection-outline
 	@include selection-container
 	@include base.fill
 	box-sizing: content-box
 	padding: $selection-padding
 	margin: -$selection-padding
 	z-index: $selection-z-index + 2
-.selection-border
+.webbit-selection-border
 	@include selection-container
 	@include base.fill
 	box-sizing: content-box
@@ -135,27 +135,27 @@ $selection-z-index: 20 !default
 	margin: -$selection-padding - $selection-border-thickness
 	z-index: $selection-z-index + 3
 	opacity: $selection-opacity
-@mixin control
+@mixin selection-control
 	position: absolute
 	touch-action: none
 	z-index: $selection-z-index + 4
-.control-knob
-	@include control
+.webbit-selection-knob
+	@include selection-control
 	top: 50%
 	left: 50%
 	width: $selection-padding
 	height: $selection-padding
 	transform: translate(-50%, -50%)
 	overflow: visible
-@mixin drag-button
-	@include control
+@mixin selection-drag-button
+	@include selection-control
 	background-color: $selection-color
 	opacity: $selection-opacity
-.move-button
-	@include drag-button
+.webbit-selection-move-button
+	@include selection-drag-button
 	@include base.fill
-.resize-button
-	@include drag-button
+.webbit-selection-resize-button
+	@include selection-drag-button
 	bottom: 0
 	right: 0
 	width: math.floor(math.div($selection-padding, 2))
@@ -169,26 +169,26 @@ $context-menu-quick-button-size: 50px !default
 $context-menu-gap: 5px !default
 $context-menu-color: #111111 !default
 $context-menu-opacity: 100% !default
-.context-menu
+.webbit-context-menu
 	position: absolute // change to relative
 	left: 50px + $context-menu-gap
-	@include base.flexElement
+	@include base.flex-element
 	align-items: flex-start
 	gap: $context-menu-gap
 	z-index: $context-menu-z-index
-.context-menu-quick-section
-	@include base.flexElement
+.webbit-context-menu-quick-section
+	@include base.flex-element
 	flex-direction: row
-	@include base.flexFill
+	@include base.flex-fill
 	gap: $context-menu-gap
-.context-menu-section
-	@include base.flexElement
+.webbit-context-menu-section
+	@include base.flex-element
 	align-items: flex-start
 	gap: 3px
 	min-width: 100%
 @mixin context-menu-button-base
-	@include base.flexElement
-	@include base.flexCenterContent
+	@include base.flex-element
+	@include base.flex-center-content
 	user-select: none
 	border-radius: $context-menu-border-radius
 	background-color: $context-menu-color
@@ -198,13 +198,13 @@ $context-menu-opacity: 100% !default
 		filter: brightness(1.25)
 	&:active
 		filter: brightness(1.5)
-.context-menu-button
+.webbit-context-menu-button
 	@include context-menu-button-base
 	align-items: flex-start
 	height: $context-menu-button-size
 	padding: 0 20px
 	min-width: 100%
-.context-menu-quick-button
+.webbit-context-menu-quick-button
 	@include context-menu-button-base
 	width: $context-menu-quick-button-size
 	height: $context-menu-quick-button-size

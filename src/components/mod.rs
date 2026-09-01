@@ -19,8 +19,8 @@ pub use resize_canvas::*;
 mod context_menu;
 pub use context_menu::*;
 
-mod side_bar;
-pub use side_bar::*;
+mod sidebar;
+pub use sidebar::*;
 
 mod group_container;
 pub use group_container::*;

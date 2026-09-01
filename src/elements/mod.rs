@@ -33,7 +33,7 @@ where
 ///
 /// # Example
 /// ```rust
-/// let button = styled(div(), "myButtonClass");
+/// let button = styled(div(), "my-button-class");
 /// ```
 ///
 /// # Returns
