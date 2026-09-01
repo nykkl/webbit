@@ -24,11 +24,14 @@ pub struct SelectionFrame {
 	pub control_knob: HtmlDivElement,
 
 	// State
+	/// The bounds that define the frame of reference of the current transformation.
+	///
+	/// Unlike [`Self::selection`] these stay fixed while a transformation is running.
 	bounds: RefCell<Option<Bounds>>,
 	translation: RefCell<Vector>,
 	scale: RefCell<Number>,
 	transformation_locked: RefCell<bool>, // to prevent overlapping translate and scale actions
-	integrate_on_move: RefCell<bool>,
+	integrate_continuously: RefCell<bool>,
 	pub on_render: CustomEventListener<()>,
 
 	// UI
@@ -91,7 +94,7 @@ impl SelectionFrame {
 			translation: RefCell::new(Vector::zero()),
 			scale: RefCell::new(1.0),
 			transformation_locked: RefCell::new(false),
-			integrate_on_move: RefCell::new(false),
+			integrate_continuously: RefCell::new(false),
 			on_render: CustomEventListener::new(),
 
 			bounds: RefCell::new(None),
@@ -116,7 +119,6 @@ impl SelectionFrame {
 			let this = this.clone();
 			move |event: PointerEvent| {
 				event.stop_propagation();
-
 				if event.buttons() != 1 {
 					return;
 				};
@@ -138,7 +140,7 @@ impl SelectionFrame {
 						let end = this.capture_position(&event).unwrap();
 						let drag = end - start.clone();
 						this.set_translation(drag);
-						if let Ok(integrate) = this.integrate_on_move.try_borrow() {
+						if let Ok(integrate) = this.integrate_continuously.try_borrow() {
 							if *integrate {
 								start = end;
 								this.integrate_transformation();
@@ -155,7 +157,7 @@ impl SelectionFrame {
 						event.stop_propagation();
 
 						let mut integrate = false;
-						if let Ok(i) = this.integrate_on_move.try_borrow() {
+						if let Ok(i) = this.integrate_continuously.try_borrow() {
 							integrate = *i;
 						}
 						if !integrate {
@@ -190,50 +192,65 @@ impl SelectionFrame {
 			}
 		});
 
-		// this.resize_down_listener.set_handler({
-		// 	let this = this.clone();
-		// 	move |event: PointerEvent| {
-		// 		event.prevent_default();
-		// 		event.stop_propagation();
-		//
-		// 		if event.buttons() != 1 { return };
-		// 		if !this.lock_transformation() { return };
-		// 		event.target().unwrap().dyn_into::<HtmlElement>().unwrap().set_pointer_capture(event.pointer_id());
-		// 		let start = this.capture_position(&event).unwrap();
-		//
-		// 		this.resize_move_listener.set_handler({
-		// 			let this = this.clone();
-		// 			let start = start.clone();
-		// 			move |event: PointerEvent| {
-		// 				event.prevent_default();
-		// 				event.stop_propagation();
-		//
-		// 				let drag = this.capture_position(&event).unwrap() - start.clone();
-		// 				this.set_scale(drag);
-		//
-		// 				this.reposition().unwrap();
-		// 			}
-		// 		});
-		//
-		// 		this.resize_up_listener.set_handler({
-		// 			let this = this.clone();
-		// 			move |event: PointerEvent| {
-		// 				event.prevent_default();
-		// 				event.stop_propagation();
-		//
-		// 				let drag = this.capture_position(&event).unwrap() - start.clone();
-		// 				this.set_scale(drag);
-		//
-		// 				this.integrate_transformation();
-		// 				this.reposition();
-		// 				this.rerender();
-		// 				this.unlock_transformation();
-		// 				this.resize_move_listener.remove_handler();
-		// 				this.resize_up_listener.remove_handler();
-		// 			}
-		// 		});
-		// 	}
-		// });
+		this.resize_down_listener.set_handler({
+			let this = this.clone();
+			move |event: PointerEvent| {
+				event.prevent_default();
+				event.stop_propagation();
+				if event.buttons() != 1 {
+					return;
+				};
+
+				if !this.lock_transformation() {
+					return;
+				};
+				event.target().unwrap().dyn_into::<HtmlElement>().unwrap().set_pointer_capture(event.pointer_id());
+				let start = this.capture_position(&event).unwrap();
+
+				this.resize_move_listener.set_handler({
+					let this = this.clone();
+					let mut start = start.clone();
+					move |event: PointerEvent| {
+						event.prevent_default();
+						event.stop_propagation();
+
+						let end = this.capture_position(&event).unwrap();
+						let drag = end - start.clone();
+						this.set_scale(drag);
+						if let Ok(integrate) = this.integrate_continuously.try_borrow() {
+							if *integrate {
+								start = end;
+								this.integrate_transformation();
+							}
+						}
+						this.reposition().unwrap();
+					}
+				});
+
+				this.resize_up_listener.set_handler({
+					let this = this.clone();
+					move |event: PointerEvent| {
+						event.prevent_default();
+						event.stop_propagation();
+
+						let mut integrate = false;
+						if let Ok(i) = this.integrate_continuously.try_borrow() {
+							integrate = *i;
+						}
+						if !integrate {
+							let drag = this.capture_position(&event).unwrap() - start.clone();
+							this.set_scale(drag);
+							this.integrate_transformation();
+						}
+						this.reposition();
+						this.rerender();
+						this.unlock_transformation();
+						this.resize_move_listener.remove_handler();
+						this.resize_up_listener.remove_handler();
+					}
+				});
+			}
+		});
 
 		this.reposition().unwrap();
 		this.rerender().unwrap();
@@ -241,19 +258,23 @@ impl SelectionFrame {
 		this
 	}
 
-	pub fn set_integrate_on_move(&self, value: bool) {
+	/// Whether to integrate the running transformation continuously (on every pointer move)
+	/// instead of once, when the action ends.
+	///
+	/// Has no effect while an action is in progress.
+	pub fn set_integrate_continuously(&self, value: bool) {
 		let Ok(locked) = self.transformation_locked.try_borrow() else { return };
 		if *locked {
-			return;
+			return; // TODO: could we change this even if transformation_locked?
 		}
-		let Ok(mut integrate) = self.integrate_on_move.try_borrow_mut() else { return };
+		let Ok(mut integrate) = self.integrate_continuously.try_borrow_mut() else { return };
 		*integrate = value;
 	}
 
+	/// The bounds that currently define the selection.
 	fn selection(&self) -> Result<Option<Bounds>, ()> {
 		Ok((self.get_bounds)())
 	}
-
 	fn lock_transformation(&self) -> bool {
 		let Ok(mut lock) = self.transformation_locked.try_borrow_mut() else { return false };
 		if *lock {
@@ -273,8 +294,9 @@ impl SelectionFrame {
 		*translation = total_drag;
 		Ok(())
 	}
+	/// Sets the scale from a drag of the selections lower right corner.
 	fn set_scale(&self, total_drag: Vector) -> Result<(), ()> {
-		let bounds = self.selection()?.ok_or(())?;
+		let bounds = self.bounds.try_borrow().or_err(())?.clone().ok_or(())?;
 
 		let scale_x = Number::max((total_drag.x + bounds.size().x) / bounds.size().x, 0.0);
 		let scale_y = Number::max((total_drag.y + bounds.size().y) / bounds.size().y, 0.0);
@@ -292,7 +314,7 @@ impl SelectionFrame {
 		let transformation = {
 			let translation = self.translation.try_borrow_mut().or_err(())?;
 			let scale = self.scale.try_borrow_mut().or_err(())?;
-			let bounds = self.selection()?.ok_or(())?;
+			let bounds = self.bounds.try_borrow().or_err(())?.clone().ok_or(())?;
 			let start = Translation2::new(bounds.start().x, bounds.start().y);
 			start
 				* convert::<_, Affine2<_>>(Scale2::new(*scale, *scale))
@@ -313,9 +335,8 @@ impl SelectionFrame {
 		Ok(Vector::new(event.client_x() as f64, event.client_y() as f64))
 	}
 
-	/// Adjusts position and size of this component to match display the current selection.
-	///
-	/// Does not rerender its content (the selection).
+	/// Adjusts position and size of this component with respect to its parent to match its internal state.
+	/// Does not reset. Does not rerender.
 	pub fn reposition(&self) -> Result<(), ()> {
 		let bounds = self.bounds.try_borrow_mut().or_err(())?;
 		let Some(bounds) = bounds.as_ref() else {
@@ -337,7 +358,8 @@ impl SelectionFrame {
 
 		Ok(())
 	}
-	/// Rerenders this compontents content (the selection).
+	/// Updates the rendition of this compontents content (the selection).
+	/// Does not reset or reposition the component.
 	pub fn rerender(&self) -> Result<(), ()> {
 		let bounds = self.bounds.try_borrow_mut().or_err(())?;
 		let Some(bounds) = bounds.as_ref() else {
@@ -352,6 +374,10 @@ impl SelectionFrame {
 
 		Ok(())
 	}
+	/// Resets this component and its internal state to match the selections bounds.
+	/// That means it drops any transformations without integrating them and snaps back
+	/// to the selections current boundaries.
+	/// This also repositions. It does not rerender.
 	pub fn reset(&self) -> Result<(), ()> {
 		self.reset_transformation()?;
 		*self.bounds.try_borrow_mut().or_err(())? = self.selection()?;
